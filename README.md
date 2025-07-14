@@ -10,5 +10,6 @@ Although this is a simple CRUD application, I wanted to mimic the technologies, 
 * UI: shadcn, tailwindCSS
 
 <br />
-<img src="screenRecord1.gif" alt="Demo" width="600">
-
+<div align="center">
+  <img src="screenRecord1.gif" alt="Demo" style="width: 100%; max-width: 800px;">
+</div>
