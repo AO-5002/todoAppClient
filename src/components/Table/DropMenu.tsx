@@ -7,25 +7,37 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { EllipsisVertical } from "lucide-react";
-
-import { Pencil } from "lucide-react";
+import { NoteContext } from "@/context/NoteContext";
+import { useContext } from "react";
 import { Trash } from "lucide-react";
 
-export default function DropMenu() {
+interface DropProps {
+  idVal: number;
+}
+
+export default function DropMenu({ idVal }: DropProps) {
+  const noteContext = useContext(NoteContext);
+  const deleteUser = noteContext?.deleteUser;
+
+  // const handleDelete = () => {
+  //   if (deleteUser) {
+  //     // e.stopPropagation();
+  //     deleteUser(idVal);
+  //   }
+  // };
+
   return (
     <DropdownMenu>
-      <DropdownMenuTrigger>
+      <DropdownMenuTrigger
+        className="w-8 h-8"
+        onClick={(e) => e.stopPropagation()}
+      >
         <EllipsisVertical height={16} width={16} />
       </DropdownMenuTrigger>
       <DropdownMenuContent>
         <DropdownMenuLabel>Actions</DropdownMenuLabel>
         <DropdownMenuSeparator />
-        <DropdownMenuItem>
-          <span className="flex items-center gap-2">
-            <p>Edit</p> <Pencil height={8} width={8} />
-          </span>
-        </DropdownMenuItem>
-        <DropdownMenuItem>
+        <DropdownMenuItem onClick={() => deleteUser && deleteUser(idVal)}>
           <span className="flex items-center gap-2">
             <p>Delete</p>{" "}
             <Trash

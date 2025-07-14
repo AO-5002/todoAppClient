@@ -14,11 +14,11 @@ export default function FilterMenu() {
     <DropdownMenu>
       <DropdownMenuTrigger>
         <Button className="flex gap-2 text-white bg-zinc-800 hover:cursor-pointer hover:shadow-xl hover:scale-105 font-bold">
-          <SlidersHorizontal /> Filter
+          <SlidersHorizontal /> Sort
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent>
-        <DropdownMenuLabel>Filter by</DropdownMenuLabel>
+        <DropdownMenuLabel>Sort By:</DropdownMenuLabel>
         <DropdownMenuSeparator />
         <DropdownMenuItem>
           <span className="flex items-center gap-2">
