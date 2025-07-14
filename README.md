@@ -9,5 +9,8 @@ Although this is a simple CRUD application, I wanted to mimic the technologies, 
 * useContext
 * UI: shadcn, tailwindCSS
 
-
+<video width="600" controls>
+  <source src="screenRecord1.webm" type="video/webm">
+  Your browser does not support the video tag.
+</video>
 
