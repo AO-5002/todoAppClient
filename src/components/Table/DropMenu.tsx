@@ -7,24 +7,26 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { EllipsisVertical } from "lucide-react";
-import { NoteContext } from "@/context/NoteContext";
-import { useContext } from "react";
 import { Trash } from "lucide-react";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { deleteUser as deleteUserAPI } from "@/utility/api/userAPI"; // Adjust the
 
 interface DropProps {
   idVal: number;
 }
 
 export default function DropMenu({ idVal }: DropProps) {
-  const noteContext = useContext(NoteContext);
-  const deleteUser = noteContext?.deleteUser;
+  const queryClient = useQueryClient();
+  const { mutate: deleteUser } = useMutation({
+    mutationFn: ({ id }: { id: number }) => deleteUserAPI(id),
 
-  // const handleDelete = () => {
-  //   if (deleteUser) {
-  //     // e.stopPropagation();
-  //     deleteUser(idVal);
-  //   }
-  // };
+    onSuccess: () => {
+      // Optionally, you can invalidate queries or perform other actions after deletion
+      console.log(`User with ID ${idVal} deleted successfully.`);
+      queryClient.invalidateQueries({ queryKey: ["users"] });
+      queryClient.invalidateQueries({ queryKey: ["user", idVal] });
+    },
+  });
 
   return (
     <DropdownMenu>
@@ -37,7 +39,7 @@ export default function DropMenu({ idVal }: DropProps) {
       <DropdownMenuContent>
         <DropdownMenuLabel>Actions</DropdownMenuLabel>
         <DropdownMenuSeparator />
-        <DropdownMenuItem onClick={() => deleteUser && deleteUser(idVal)}>
+        <DropdownMenuItem onClick={() => deleteUser({ id: idVal })}>
           <span className="flex items-center gap-2">
             <p>Delete</p>{" "}
             <Trash

@@ -1,13 +1,24 @@
 import MainLayout from "@/layout/MainLayout";
-import { useContext, useState } from "react";
-import { NoteContext } from "@/context/NoteContext";
-import type { User } from "@/utility/User";
 import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
+import { addUser as addUserApi } from "@/utility/api/userAPI";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import type { User } from "@/utility/User";
+import { userValidation } from "@/utility/validation/userSchema";
 
 export default function TaskCreatePage() {
-  const noteContext = useContext(NoteContext);
-  const addUser = noteContext?.addUser;
+  const navigate = useNavigate();
+  const queryClient = useQueryClient();
+  const { mutate: addUser } = useMutation({
+    mutationFn: (user: User) => addUserApi(user),
+    onSuccess: () => {
+      // Invalidate the users list cache to refresh the data
+      queryClient.invalidateQueries({ queryKey: ["users"] });
+      navigate("/"); // Navigate to homepage on success
+    },
+  });
 
   // State to manage the title input
   const [title, setTitle] = useState("");
@@ -15,21 +26,23 @@ export default function TaskCreatePage() {
   // Function to handle creating a new User object
   const handleAddUser = () => {
     if (title.trim() && addUser) {
-      const newUser: User = {
+      const result = userValidation.safeParse({
         title: title.trim(),
         completed: false,
-        // Add other User properties as needed based on your User type
-      };
+      });
 
-      addUser(newUser);
-
-      // Reset the form after adding
-      setTitle("");
+      if (result.success) {
+        addUser(result.data);
+        setTitle("");
+      } else {
+        console.error("Validation failed:", result.error);
+        // Handle validation errors (e.g., show a message to the user)
+      }
     }
   };
 
   return (
-    <MainLayout>
+    <MainLayout data-testid="task-page">
       <div className="w-full col-start-2 col-span-2 row-span-1 flex flex-col items-center justify-center p-8">
         <h1 className="w-full text-4xl font-light tracking-wide items-start">
           <strong>Title: </strong>
@@ -53,14 +66,12 @@ export default function TaskCreatePage() {
           <Link to={"/"}>
             <Button className="bg-red-400 text-white font-bold">Cancel</Button>
           </Link>
-          <Link to={"/"}>
-            <Button
-              onClick={handleAddUser}
-              className="bg-green-500 text-white font-bold"
-            >
-              Add Task
-            </Button>
-          </Link>
+          <Button
+            onClick={handleAddUser}
+            className="bg-green-500 text-white font-bold"
+          >
+            Add Task
+          </Button>
         </div>
       </div>
     </MainLayout>
